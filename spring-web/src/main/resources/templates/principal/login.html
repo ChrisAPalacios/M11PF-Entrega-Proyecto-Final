@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+<header th:replace="~{plantillas/header :: header}"></header>
+
+<main th:replace="~{plantillas/layout :: contenido(~{::formulario})}">
+    <div th:fragment="formulario">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-lg">
+                    <div class="card-body">
+                        <h2 class="text-center text-primary">Iniciar Sesión</h2>
+                        <form th:action="@{/login-inteligente}" method="post">
+                            <div class="mb-3">
+                                <label class="form-label">Correo Electrónico:</label>
+                                <input type="email" class="form-control" name="correo" placeholder="ejemplo@unam.mx"
+                                       th:value="${correo}">
+                                <div class="text-danger" th:if="${errorCorreo}" th:text="${errorCorreo}"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Contraseña:</label>
+                                <input type="password" class="form-control" name="password" placeholder="Contraseña">
+                                <div class="text-danger" th:if="${errorPassword}" th:text="${errorPassword}"></div>
+                            </div>
+
+                            <div th:if="${error}" class="alert alert-danger text-center">
+                                <p th:text="${error}"></p>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Ingresar</button>
+                            </div>
+                        </form>
+
+                        <p class="text-center mt-3">
+                            ¿No tienes una cuenta? <a th:href="@{/registro}">Regístrate aquí</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

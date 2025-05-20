@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+
+<header th:replace="~{plantillas/header_cliente :: header}"></header>
+
+<main th:replace="~{plantillas/layout :: contenido(~{::contenidoCanasta})}">
+  <div th:fragment="contenidoCanasta">
+    <h2 class="text-center mb-4">Mi Canasta de Boletos</h2>
+
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+        <tr>
+          <th>#</th>
+          <th>Evento</th>
+          <th>Zona</th>
+          <th>Asiento</th>
+          <th>Estado</th>
+          <th>Acción</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item, iterStat : ${canasta}">
+          <td th:text="${iterStat.index + 1}">1</td>
+          <td th:text="${item.evento.nombreEvento}">Nombre del evento</td>
+          <td th:text="${item.asiento.zona.nombreZona}">Zona</td>
+          <td th:text="${item.asiento.numeroAsiento}">A-001</td>
+          <td th:text="${item.estado}">DISPONIBLE</td>
+          <td>
+            <form th:action="@{/cliente/canasta/eliminar/{index}(index=${iterStat.index})}" method="get">
+              <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="text-center mt-4">
+      <a th:href="@{/cliente/eventos}" class="btn btn-secondary">Seguir comprando</a>
+
+      <a th:href="@{/cliente/pagos}"
+         class="btn btn-success"
+         th:classappend="${#lists.isEmpty(canasta)} ? ' disabled' : ''"
+         th:attr="aria-disabled=${#lists.isEmpty(canasta)}">Proceder al pago</a>
+    </div>
+  </div>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>

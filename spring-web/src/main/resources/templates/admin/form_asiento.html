@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+
+<header th:replace="~{plantillas/header_admin :: header}"></header>
+
+<main class="container mt-4">
+  <h2 class="text-center" th:text="${titulo}">Nuevo Asiento</h2>
+
+  <form th:action="@{/admin/asientos/guardar}" th:object="${asiento}" method="post" class="mt-4">
+    <input type="hidden" th:field="*{idAsiento}">
+    <input type="hidden" th:field="*{zona.idZona}">
+
+    <div class="mb-3">
+      <label for="numeroAsiento" class="form-label">Número del Asiento</label>
+      <input type="text" id="numeroAsiento" th:field="*{numeroAsiento}" class="form-control" required>
+      <div class="form-text text-danger" th:if="${error}" th:text="${error}"></div>
+    </div>
+
+    <div class="text-end">
+      <button type="submit" class="btn btn-primary">Guardar</button>
+      <a th:href="@{'/admin/asientos/' + ${asiento.zona.idZona}}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+
+<header th:replace="~{plantillas/header_admin :: header}"></header>
+
+<main class="container mt-5">
+  <h2 class="text-center text-dark">Bienvenido, <span th:text="${admin.nombre}">Administrador</span></h2>
+  <p class="text-center">Desde este panel puedes gestionar el sistema Eventia.</p>
+
+  <div class="row mt-4 g-3 justify-content-center">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <div class="card h-100 text-center shadow">
+        <div class="card-body">
+          <h5 class="card-title">Eventos</h5>
+          <p class="card-text">Crea, edita o elimina eventos disponibles.</p>
+          <a th:href="@{/admin/eventos}" class="btn btn-primary">Gestionar Eventos</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <div class="card h-100 text-center shadow">
+        <div class="card-body">
+          <h5 class="card-title">Usuarios</h5>
+          <p class="card-text">Administra los clientes registrados.</p>
+          <a th:href="@{/admin/usuarios}" class="btn btn-primary">Ver Usuarios</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <div class="card h-100 text-center shadow">
+        <div class="card-body">
+          <h5 class="card-title">Zonas</h5>
+          <p class="card-text">Gestiona zonas y asientos para los eventos.</p>
+          <a th:href="@{/admin/zonas}" class="btn btn-primary">Ver Zonas</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <div class="card h-100 text-center shadow">
+        <div class="card-body">
+          <h5 class="card-title">Tipos de Evento</h5>
+          <p class="card-text">Consulta o añade nuevos tipos de evento.</p>
+          <a th:href="@{/admin/tipos-evento}" class="btn btn-primary">Ver Tipos</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

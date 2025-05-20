@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+<header th:replace="~{plantillas/header :: header}"></header>
+
+<main th:replace="~{plantillas/layout :: contenido(~{::eventosContenido})}">
+  <div th:fragment="eventosContenido">
+    <h1 class="text-center">Lista de Eventos</h1>
+
+    <div class="row">
+      <div class="col-md-4 mb-4" th:each="evento : ${eventos.content}">
+        <div class="card h-100 text-center shadow">
+          <img th:if="${evento.poster != null}"
+               th:src="@{/images/{poster}(poster=${evento.poster})}"
+               alt="Póster del evento"
+               class="card-img-top"
+               style="height: 250px; object-fit: cover;" />
+          <div class="card-body">
+            <h5 class="card-title" th:text="${evento.nombreEvento}">Nombre del Evento</h5>
+            <p class="card-text">
+              <strong>Fecha:</strong> <span th:text="${evento.fecha}"></span><br>
+              <strong>Duración:</strong> <span th:text="${evento.duracion}"></span> min<br>
+              <strong>Categoría:</strong> <span th:text="${evento.tipoEvento.tipo}"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paginación -->
+    <nav th:if="${eventos.totalPages > 1}" aria-label="Paginación de eventos">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" th:classappend="${eventos.first} ? 'disabled'">
+          <a class="page-link" th:href="@{/eventos(page=${eventos.number - 1})}">Anterior</a>
+        </li>
+
+        <li class="page-item" th:each="i : ${#numbers.sequence(0, eventos.totalPages - 1)}"
+            th:classappend="${i == eventos.number} ? 'active'">
+          <a class="page-link" th:href="@{/eventos(page=${i})}" th:text="${i + 1}"></a>
+        </li>
+
+        <li class="page-item" th:classappend="${eventos.last} ? 'disabled'">
+          <a class="page-link" th:href="@{/eventos(page=${eventos.number + 1})}">Siguiente</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

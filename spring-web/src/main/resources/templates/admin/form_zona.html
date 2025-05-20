@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+
+<header th:replace="~{plantillas/header_admin :: header}"></header>
+
+<main class="container mt-4">
+  <h2 class="text-center mb-4" th:text="${titulo}">Formulario Zona</h2>
+
+  <form th:action="@{/admin/zonas/guardar}" th:object="${zona}" method="post">
+    <input type="hidden" th:field="*{idZona}" />
+
+    <div class="mb-3">
+      <label for="nombreZona" class="form-label">Nombre de la Zona:</label>
+      <input type="text" id="nombreZona" th:field="*{nombreZona}" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="precio" class="form-label">Precio:</label>
+      <input type="number" id="precio" th:field="*{precio}" class="form-control" step="0.01" required>
+    </div>
+    <div class="mb-3">
+      <label for="capacidad" class="form-label">Capacidad:</label>
+      <input type="number"
+             class="form-control"
+             id="capacidad"
+             name="capacidad"
+             th:value="${zona.capacidad}"
+             th:readonly="${zona.idZona != null}" />
+
+      <div class="form-text text-muted">Este valor no puede modificarse porque ya hay asientos asignados.</div>
+    </div>
+
+    <div class="text-end">
+      <button type="submit" class="btn btn-primary">Guardar</button>
+      <a th:href="@{/admin/zonas}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<header th:fragment="header"
+        class="navbar navbar-expand-lg navbar-dark bg-primary"
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" th:href="@{/cliente/inicio}">
+            <img th:src="@{/images/img.png}" alt="Logo Eventia"
+                 style="height: 50px; margin-right: 5px;">
+            Eventia
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item" sec:authorize="hasRole('CLIENTE')"><a class="nav-link" th:href="@{/cliente/inicio}">Inicio</a></li>
+                <li class="nav-item" sec:authorize="hasRole('CLIENTE')"><a class="nav-link" th:href="@{/cliente/eventos}">Eventos</a></li>
+                <li class="nav-item" sec:authorize="hasRole('CLIENTE')"><a class="nav-link" th:href="@{/cliente/categorias}">Categorías</a></li>
+
+                <li class="nav-item dropdown" sec:authorize="hasRole('CLIENTE')">
+                    <a class="nav-link dropdown-toggle" href="#" id="cuentaDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        Mi Cuenta
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cuentaDropdown">
+                        <li><a class="dropdown-item" th:href="@{/cliente/perfil}">Mi Perfil</a></li>
+                        <li><a class="dropdown-item" th:href="@{/cliente/canasta}">Canasta</a></li>
+                        <li><a class="dropdown-item" th:href="@{/cliente/mis-boletos}">Mis Boletos</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" th:href="@{/logout}">Cerrar Sesión</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>

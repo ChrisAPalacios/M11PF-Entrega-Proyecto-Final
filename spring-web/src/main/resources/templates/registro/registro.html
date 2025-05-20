@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+
+<header th:replace="~{plantillas/header :: header}"></header>
+
+<main th:replace="~{plantillas/layout :: contenido(~{::registroContenido})}">
+  <div th:fragment="registroContenido">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow-lg">
+          <div class="card-body">
+            <h2 class="text-center text-primary">Registro</h2>
+            <form th:action="@{/registro}" method="post" th:object="${usuario}">
+              <div class="mb-3">
+                <label class="form-label">Nombre:</label>
+                <input type="text" class="form-control" placeholder="Tu nombre" th:field="*{nombre}">
+                <div class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Apellido Paterno:</label>
+                <input type="text" class="form-control" placeholder="Tu apellido paterno" th:field="*{apellidoPaterno}">
+                <div class="text-danger" th:if="${#fields.hasErrors('apellidoPaterno')}" th:errors="*{apellidoPaterno}"></div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Apellido Materno:</label>
+                <input type="text" class="form-control" placeholder="Tu apellido materno" th:field="*{apellidoMaterno}">
+                <div class="text-danger" th:if="${#fields.hasErrors('apellidoMaterno')}" th:errors="*{apellidoMaterno}"></div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Correo Electrónico:</label>
+                <input type="email" class="form-control" placeholder="ejemplo@unam.mx" th:field="*{correo}">
+                <div class="text-danger" th:if="${#fields.hasErrors('correo')}" th:errors="*{correo}"></div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Teléfono:</label>
+                <input type="text" class="form-control" placeholder="Tu número de teléfono" th:field="*{telefono}">
+                <div class="text-danger" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Contraseña:</label>
+                <input type="password" class="form-control" placeholder="Contraseña" th:field="*{password}">
+                <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+              </div>
+
+              <hr>
+              <h5 class="text-primary">Dirección</h5>
+
+              <div class="mb-3">
+                <label class="form-label">Calle:</label>
+                <input type="text" class="form-control" name="calle" placeholder="Ej. Av. Universidad" required>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Número Exterior:</label>
+                  <input type="text" class="form-control" name="numExt" placeholder="Ej. 123" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Número Interior (opcional):</label>
+                  <input type="text" class="form-control" name="numInt" placeholder="Ej. 4B">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Alcaldía:</label>
+                <select class="form-select" name="idAlcaldia" id="selectAlcaldia" required>
+                  <option value="">Selecciona una alcaldía</option>
+                  <option th:each="alc : ${alcaldias}" th:value="${alc.idAlcaldia}" th:text="${alc.nombreAlcaldia}"></option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Colonia:</label>
+                <select class="form-select" name="idColonia" id="selectColonia" required>
+                  <option value="">Selecciona una colonia</option>
+                </select>
+              </div>
+              <hr>
+              <h5 class="text-primary">Método de Pago</h5>
+
+              <div class="mb-3">
+                <label class="form-label">Método de pago:</label>
+                <select class="form-select" name="metodoPago" required>
+                  <option value="">Selecciona método de pago</option>
+                  <option value="PAYPAL">PayPal</option>
+                  <option value="CREDITO">Tarjeta de Crédito</option>
+                  <option value="DEBITO">Tarjeta de Débito</option>
+                </select>
+              </div>
+              <div th:if="${error}" class="alert alert-danger text-center">
+                <p th:text="${error}"></p>
+              </div>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Registrarse</button>
+              </div>
+            </form>
+
+            <p class="text-center mt-3">
+              ¿Ya tienes una cuenta? <a th:href="@{/login}">Inicia sesión aquí</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const selectAlcaldia = document.getElementById("selectAlcaldia");
+    const selectColonia = document.getElementById("selectColonia");
+
+    selectAlcaldia.addEventListener("change", function () {
+      const idAlcaldia = this.value;
+      fetch(`/colonias?alcaldiaId=${idAlcaldia}`)
+        .then(res => res.json())
+        .then(data => {
+          selectColonia.innerHTML = '<option value="">Selecciona una colonia</option>';
+          data.forEach(colonia => {
+            const opt = document.createElement("option");
+            opt.value = colonia.idColonia;
+            opt.textContent = colonia.nombreColonia;
+            selectColonia.appendChild(opt);
+          });
+        });
+    });
+  });
+</script>
+
+
+</body>
+</html>

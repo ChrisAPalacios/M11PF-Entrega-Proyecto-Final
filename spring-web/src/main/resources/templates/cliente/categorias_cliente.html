@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+
+<header th:replace="~{plantillas/header_cliente :: header}"></header>
+
+<div th:replace="~{plantillas/layout :: contenido(~{::contenidoCliente})}">
+  <div th:fragment="contenidoCliente">
+    <h1 class="text-center mb-4">Categorías de Eventos</h1>
+
+    <div class="row mt-4">
+      <div class="col-md-4 mb-4" th:each="categoria : ${categorias}">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title" th:text="${categoria.tipo}">Nombre de la Categoría</h5>
+            <a th:href="@{/cliente/eventos?categoria={id}(id=${categoria.idTipoEvento})}" class="btn btn-primary">
+              Ver eventos
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

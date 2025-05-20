@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+
+<header th:replace="~{plantillas/header_cliente :: header}"></header>
+
+<main class="container mt-5">
+  <div class="card shadow-lg">
+    <div class="card-body">
+      <h2 class="text-center text-primary">Mi Perfil</h2>
+      <div class="row">
+        <div class="col-md-6 offset-md-3">
+          <p><strong>Nombre:</strong> <span th:text="${usuario.nombre}">Nombre</span></p>
+          <p><strong>Apellido Paterno:</strong> <span th:text="${usuario.apellidoPaterno}">Apellido Paterno</span></p>
+          <p><strong>Apellido Materno:</strong> <span th:text="${usuario.apellidoMaterno}">Apellido Materno</span></p>
+          <p><strong>Correo:</strong> <span th:text="${usuario.correo}">Correo</span></p>
+          <p><strong>Teléfono:</strong> <span th:text="${usuario.telefono}">Teléfono</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

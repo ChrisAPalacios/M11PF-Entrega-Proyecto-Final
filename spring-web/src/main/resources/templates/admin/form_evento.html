@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+
+<header th:replace="~{plantillas/header_admin :: header}"></header>
+
+<main class="container mt-5">
+  <h2 class="text-center text-primary" th:text="${titulo}">Formulario Evento</h2>
+
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <form th:action="@{/admin/eventos/guardar}" method="post" th:object="${evento}">
+        <input type="hidden" th:field="*{idEvento}"/>
+
+        <div class="mb-3">
+          <label class="form-label">Nombre del Evento:</label>
+          <input type="text" class="form-control" th:field="*{nombreEvento}" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Fecha:</label>
+          <input type="date" class="form-control" th:field="*{fecha}" th:attr="min=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" required>
+        </div>
+
+
+        <div class="mb-3">
+          <label class="form-label">Duración (min):</label>
+          <input type="number" class="form-control" th:field="*{duracion}" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Tipo de Evento:</label>
+          <select class="form-select" th:field="*{tipoEvento.idTipoEvento}" required>
+            <option value="" disabled>-- Selecciona un tipo --</option>
+            <option th:each="tipo : ${tipos}" th:value="${tipo.idTipoEvento}" th:text="${tipo.tipo}"></option>
+          </select>
+        </div>
+
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <a th:href="@{/admin/eventos}" class="btn btn-secondary mt-2">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

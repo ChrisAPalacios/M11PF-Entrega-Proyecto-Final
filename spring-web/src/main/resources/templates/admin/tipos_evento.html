@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+
+<header th:replace="~{plantillas/header_admin :: header}"></header>
+
+<main class="container mt-5">
+  <h2 class="text-center text-primary">Gestión de Tipos de Evento</h2>
+
+  <div class="table-responsive mt-4">
+    <table class="table table-striped table-bordered text-center align-middle">
+      <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Tipo</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="tipo : ${tiposEvento}">
+        <td th:text="${tipo.idTipoEvento}">1</td>
+        <td th:text="${tipo.tipo}">Rock</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card mt-5 shadow">
+    <div class="card-header text-white bg-primary">
+      <h5 class="mb-0">Agregar Nuevo Tipo de Evento</h5>
+    </div>
+    <div class="card-body">
+      <form th:action="@{/admin/tipos-evento/agregar}" method="post" th:object="${nuevoTipo}">
+        <div class="mb-3">
+          <label for="tipo" class="form-label">Nombre del Tipo:</label>
+          <input type="text" class="form-control" id="tipo" aria-label="Nombre del Tipo"
+                 th:field="*{tipo}" placeholder="Ej: Salsa" required>
+        </div>
+        <div class="text-center">
+          <button type="submit" class="btn btn-success">Agregar Tipo</button>
+          <a th:href="@{/admin/inicio}" class="btn btn-secondary">Volver al Panel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

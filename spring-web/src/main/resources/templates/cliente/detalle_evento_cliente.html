@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+
+<header th:replace="~{plantillas/header_cliente :: header}"></header>
+
+<main th:replace="~{plantillas/layout :: contenido(~{::contenidoCliente})}">
+  <div th:fragment="contenidoCliente">
+    <h1 class="text-center mb-4" th:text="${evento.nombre}">Nombre del Evento</h1>
+
+    <div class="row">
+      <div class="col-md-6">
+        <img th:src="@{/static/image/evento.jpg}" class="img-fluid rounded shadow" alt="Imagen del evento">
+      </div>
+
+      <div class="col-md-6">
+        <p><strong>Fecha:</strong> <span th:text="${evento.fecha}">00/00/0000</span></p>
+        <p><strong>Ubicación:</strong> <span th:text="${evento.ubicacion}">Lugar del evento</span></p>
+        <p><strong>Duración:</strong> <span th:text="${evento.duracion}"></span> minutos</p>
+        <p><strong>Precio:</strong> $<span th:text="${evento.precio}">0.00</span></p>
+        <p><strong>Descripción:</strong></p>
+        <p th:text="${evento.descripcion}">Descripción del evento...</p>
+
+        <div class="mt-4 d-flex gap-2">
+          <a th:href="@{/cliente/eventos}" class="btn btn-secondary">Volver a eventos</a>
+          <a th:href="@{/cliente/comprar/{id}(id=${evento.id})}" class="btn btn-primary">Comprar boletos</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

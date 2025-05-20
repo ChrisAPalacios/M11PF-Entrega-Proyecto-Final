@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+
+<header th:replace="~{plantillas/header_cliente :: header}"></header>
+
+<main class="container mt-4">
+    <h2 class="mb-4 text-center">Mis Boletos</h2>
+
+    <div th:if="${mensaje}" class="alert alert-success text-center" th:text="${mensaje}"></div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle text-center">
+            <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Evento</th>
+                <th>Zona</th>
+                <th>Asiento</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="boleto, iterStat : ${boletos}"
+                th:classappend="${boleto.estado == 'Disponible'} ? 'table-secondary text-muted' : ''">
+                <td th:text="${iterStat.index + 1}">1</td>
+                <td th:text="${boleto.asientoEvento.evento.nombreEvento}">Evento</td>
+                <td th:text="${boleto.asientoEvento.asiento.zona.nombreZona}">Zona</td>
+                <td th:text="${boleto.asientoEvento.asiento.numeroAsiento}">A-001</td>
+                <td th:text="${boleto.asientoEvento.asiento.zona.precio}">100.00</td>
+                <td>
+                    <button class="btn btn-danger btn-sm"
+                            th:if="${boleto.estado != 'Disponible'}"
+                            data-bs-toggle="modal"
+                            th:attr="data-bs-target='#modalDevolver-' + ${boleto.idBoleto}">
+                        Devolver
+                    </button>
+                    <span th:if="${boleto.estado == 'Disponible'}" class="text-muted">Devuelto</span>
+
+                    <!-- Modal devolución -->
+                    <div th:if="${boleto.estado != 'Disponible'}" class="modal fade"
+                         th:id="'modalDevolver-' + ${boleto.idBoleto}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form th:action="@{/cliente/devolver-boleto}" method="post">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">¿Estás seguro de devolver este boleto?</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" name="idBoleto" th:value="${boleto.idBoleto}" />
+                                        <label class="form-label">Motivo:</label>
+                                        <textarea class="form-control" name="motivo" required></textarea>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                        <button type="submit" class="btn btn-danger">Confirmar Devolución</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <nav th:if="${totalPages > 1}" class="mt-4 d-flex justify-content-center">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a class="page-link" th:href="@{/cliente/mis-boletos(page=${currentPage - 1})}">Anterior</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:classappend="${currentPage == i} ? 'active'">
+                    <a class="page-link" th:href="@{/cliente/mis-boletos(page=${i})}" th:text="${i + 1}">1</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/cliente/mis-boletos(page=${currentPage + 1})}">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

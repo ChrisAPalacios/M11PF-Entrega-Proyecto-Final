@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+
+<header th:replace="~{plantillas/header_cliente :: header}"></header>
+
+<main th:replace="~{plantillas/layout :: contenido(~{::contenidoCompra})}">
+  <div th:fragment="contenidoCompra">
+    <h2 class="text-center mb-4">
+      Selecciona tus Boletos para
+      <span th:text="'(' + ${evento.nombreEvento} + ')'">Nombre del Evento</span>
+    </h2>
+
+    <div class="row">
+      <div class="col-md-7">
+        <div class="border rounded shadow-sm p-3 text-center">
+          <img th:src="@{/images/MapaEvento.jpg}" alt="Mapa del evento" class="img-fluid">
+        </div>
+      </div>
+
+      <div class="col-md-5">
+        <form th:action="@{/cliente/eventos/{id}/seleccion(id=${evento.idEvento})}" method="get">
+          <input type="hidden" name="idEvento" th:value="${evento.idEvento}" />
+
+          <div class="mb-3">
+            <label for="zona" class="form-label">Zona:</label>
+            <select class="form-select" name="idZona" id="zona" required>
+              <option value="">-- Selecciona una zona --</option>
+              <option th:each="zona : ${zonas}"
+                      th:value="${zona.idZona}"
+                      th:text="${zona.nombreZona}"
+                      th:selected="${zona.idZona == idZona}"></option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="cantidad" class="form-label">Cantidad:</label>
+            <input type="number" name="cantidad" id="cantidad" min="1" max="10"
+                   class="form-control" th:value="${cantidad}" required>
+          </div>
+
+          <div class="text-center mb-4">
+            <button type="submit" class="btn btn-primary w-100">Seleccionar tus Asientos</button>
+          </div>
+        </form>
+
+        <div id="seccionAsientos" th:if="${asientosDisponibles}">
+          <form th:action="@{/cliente/agregar-a-canasta}" method="post" onsubmit="return validarSeleccion()">
+            <input type="hidden" name="idEvento" th:value="${evento.idEvento}" />
+            <input type="hidden" name="idZona" th:value="${idZona}" />
+            <input type="hidden" name="cantidad" th:value="${cantidad}" />
+
+            <label class="form-label">Selecciona los asientos:</label>
+
+            <div class="form-check page-item d-none"
+                 th:each="asientoEvento : ${asientosDisponibles}">
+
+              <div th:if="${asientoEvento.estado == 'OCUPADO'}" class="text-danger">
+                <input class="form-check-input"
+                       type="checkbox"
+                       name="asientosSeleccionados"
+                       th:value="${asientoEvento.id.idAsiento}"
+                       th:id="'asiento-' + ${asientoEvento.id.idAsiento}"
+                       disabled />
+                <label class="form-check-label"
+                       th:for="'asiento-' + ${asientoEvento.id.idAsiento}">
+                  <span th:text="${asientoEvento.asiento.numeroAsiento}"></span>
+                  (Ocupado)
+                </label>
+              </div>
+
+              <div th:if="${asientoEvento.estado == 'EN_PROCESO'}" class="text-warning">
+                <input class="form-check-input"
+                       type="checkbox"
+                       name="asientosSeleccionados"
+                       th:value="${asientoEvento.id.idAsiento}"
+                       th:id="'asiento-' + ${asientoEvento.id.idAsiento}"
+                       disabled />
+                <label class="form-check-label"
+                       th:for="'asiento-' + ${asientoEvento.id.idAsiento}">
+                  <span th:text="${asientoEvento.asiento.numeroAsiento}"></span>
+                  (En proceso)
+                </label>
+              </div>
+
+              <div th:if="${asientoEvento.estado == 'DISPONIBLE'}" style="color: black;">
+                <input class="form-check-input"
+                       type="checkbox"
+                       name="asientosSeleccionados"
+                       th:value="${asientoEvento.id.idAsiento}"
+                       th:id="'asiento-' + ${asientoEvento.id.idAsiento}" />
+                <label class="form-check-label"
+                       th:for="'asiento-' + ${asientoEvento.id.idAsiento}">
+                  <span th:text="${asientoEvento.asiento.numeroAsiento}"></span>
+                  (Disponible)
+                </label>
+              </div>
+
+            </div>
+
+            <nav>
+              <ul class="pagination justify-content-center mt-3" id="pagination-controls"></ul>
+            </nav>
+
+            <div id="alerta" class="alert alert-danger d-none" role="alert">
+              La cantidad de asientos seleccionados no coincide con la cantidad deseada.
+            </div>
+
+            <button type="submit" class="btn btn-success w-100 mt-2">Agregar a Canasta</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<script>
+  let paginaActual = 0;
+  const elementosPorPagina = 10;
+
+  function cambiarPagina(nuevaPagina) {
+    paginaActual = nuevaPagina;
+    actualizarVista();
+  }
+
+  function actualizarVista() {
+    const items = document.querySelectorAll(".page-item");
+    const totalPaginas = Math.ceil(items.length / elementosPorPagina);
+
+    items.forEach(item => item.classList.add("d-none"));
+    const inicio = paginaActual * elementosPorPagina;
+    const fin = inicio + elementosPorPagina;
+    Array.from(items).slice(inicio, fin).forEach(item => item.classList.remove("d-none"));
+
+    const pagination = document.getElementById("pagination-controls");
+    pagination.innerHTML = "";
+
+    if (totalPaginas > 1) {
+      const prev = document.createElement("li");
+      prev.className = `page-item ${paginaActual === 0 ? 'disabled' : ''}`;
+      prev.innerHTML = `<a class="page-link" href="#" onclick="cambiarPagina(${paginaActual - 1})">Anterior</a>`;
+      pagination.appendChild(prev);
+
+      for (let i = 0; i < totalPaginas; i++) {
+        const page = document.createElement("li");
+        page.className = `page-item ${i === paginaActual ? 'active' : ''}`;
+        page.innerHTML = `<a class="page-link" href="#" onclick="cambiarPagina(${i})">${i + 1}</a>`;
+        pagination.appendChild(page);
+      }
+
+      const next = document.createElement("li");
+      next.className = `page-item ${paginaActual === totalPaginas - 1 ? 'disabled' : ''}`;
+      next.innerHTML = `<a class="page-link" href="#" onclick="cambiarPagina(${paginaActual + 1})">Siguiente</a>`;
+      pagination.appendChild(next);
+    }
+  }
+
+  function validarSeleccion() {
+    const cantidad = parseInt(document.getElementById("cantidad").value);
+    const seleccionados = document.querySelectorAll('input[name="asientosSeleccionados"]:checked').length;
+    const alerta = document.getElementById("alerta");
+
+    if (cantidad !== seleccionados) {
+      alerta.classList.remove("d-none");
+      return false;
+    }
+    alerta.classList.add("d-none");
+    return true;
+  }
+
+  window.onload = () => {
+    if (document.getElementById("seccionAsientos")) {
+      actualizarVista();
+    }
+  };
+</script>
+</body>
+</html>

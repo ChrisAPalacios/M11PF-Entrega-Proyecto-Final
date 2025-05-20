@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+
+<header th:replace="~{plantillas/header_cliente :: header}"></header>
+
+<main class="container mt-5">
+  <h2 class="text-center mb-4">Resumen de Compra</h2>
+
+  <div class="table-responsive">
+    <table class="table table-bordered">
+      <thead class="table-dark">
+      <tr>
+        <th>#</th>
+        <th>Evento</th>
+        <th>Zona</th>
+        <th>Asiento</th>
+        <th>Precio</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="item, iterStat : ${canasta}">
+        <td th:text="${iterStat.index + 1}">1</td>
+        <td th:text="${item.evento.nombreEvento}">Nombre</td>
+        <td th:text="${item.asiento.zona.nombreZona}">Zona</td>
+        <td th:text="${item.asiento.numeroAsiento}">A-001</td>
+        <td th:text="${item.asiento.zona.precio}">100.0</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="text-end mb-5">
+    <h4>Total: $<span th:text="${total}">0.0</span> MXN</h4>
+  </div>
+
+  <div>
+    <h4 class="mb-3">Forma de Pago:</h4>
+
+    <form th:action="@{/cliente/finalizar}" method="post" onsubmit="return validarFormularioPago(event)">
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label for="tarjeta" class="form-label">Número de Tarjeta</label>
+          <input type="text" id="tarjeta" name="tarjeta" class="form-control" required pattern="[0-9]{12}" maxlength="12" placeholder="Ej: 123456789012">
+        </div>
+        <div class="col-md-3">
+          <label for="mes" class="form-label">Mes</label>
+          <select id="mes" name="mes" class="form-select" required>
+            <option value="">MM</option>
+            <th:block th:each="m : ${#numbers.sequence(1, 12)}">
+              <option th:value="${m < 10 ? '0' + m : m}" th:text="${m < 10 ? '0' + m : m}"></option>
+            </th:block>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="anio" class="form-label">Año</label>
+          <select id="anio" name="anio" class="form-select" required>
+            <option value="">AA</option>
+            <th:block th:with="year=${#dates.year(#dates.createNow())}">
+              <th:block th:each="i : ${#numbers.sequence(year, year + 10)}">
+                <option th:value="${i}" th:text="${i}"></option>
+              </th:block>
+            </th:block>
+          </select>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-3">
+          <label for="cvv" class="form-label">CVV</label>
+          <input type="text" id="cvv" name="cvv" class="form-control" required pattern="[0-9]{3}" maxlength="3" placeholder="Ej: 123">
+        </div>
+      </div>
+
+      <div class="text-center">
+        <a th:href="@{/cliente/canasta}" class="btn btn-secondary">Volver a Canasta</a>
+        <button type="submit" class="btn btn-success">Confirmar Compra</button>
+      </div>
+    </form>
+
+    <div id="mensajeError" class="alert alert-danger mt-3 d-none text-center"></div>
+  </div>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script>
+  function validarFormularioPago(event) {
+    const tarjeta = document.getElementById("tarjeta").value;
+    const mes = parseInt(document.getElementById("mes").value);
+    const anio = parseInt(document.getElementById("anio").value);
+    const cvv = document.getElementById("cvv").value;
+    const mensajeError = document.getElementById("mensajeError");
+    const fechaActual = new Date();
+    const mesActual = fechaActual.getMonth() + 1;
+    const anioActual = fechaActual.getFullYear();
+
+    mensajeError.classList.add("d-none");
+
+    if (!/^\d{12}$/.test(tarjeta)) {
+      mensajeError.textContent = "El número de tarjeta debe tener exactamente 12 dígitos numéricos.";
+      mensajeError.classList.remove("d-none");
+      event.preventDefault();
+      return false;
+    }
+
+    if (!/^\d{3}$/.test(cvv)) {
+      mensajeError.textContent = "El CVV debe tener exactamente 3 dígitos numéricos.";
+      mensajeError.classList.remove("d-none");
+      event.preventDefault();
+      return false;
+    }
+
+    if (isNaN(mes) || isNaN(anio)) {
+      mensajeError.textContent = "Debe seleccionar un mes y año válidos.";
+      mensajeError.classList.remove("d-none");
+      event.preventDefault();
+      return false;
+    }
+
+    if (anio < anioActual || (anio === anioActual && mes < mesActual)) {
+      mensajeError.textContent = "Tarjeta expirada.";
+      mensajeError.classList.remove("d-none");
+      event.preventDefault();
+      return false;
+    }
+
+    return true;
+  }
+</script>
+</body>
+</html>

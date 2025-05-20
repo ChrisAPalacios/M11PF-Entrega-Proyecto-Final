@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+<header th:replace="~{plantillas/header_cliente :: header}"></header>
+
+<main th:replace="~{plantillas/layout :: contenido(~{::eventosContenido})}">
+  <div th:fragment="eventosContenido">
+    <h1 class="text-center">Lista de Eventos</h1>
+
+    <div class="row">
+      <div class="col-md-4 mb-4" th:each="evento : ${eventos}">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body text-center d-flex flex-column justify-content-between">
+            <div>
+              <img th:if="${evento.poster != null}"
+                   th:src="@{/images/{poster}(poster=${evento.poster})}"
+                   alt="Póster del evento"
+                   class="card-img-top"
+                   style="height: 250px; object-fit: cover;"/>
+              <h5 class="card-title" th:text="${evento.nombreEvento}">Nombre del Evento</h5>
+              <p class="card-text">
+                <strong>Fecha:</strong> <span th:text="${evento.fecha}">2025-06-10</span><br>
+                <strong>Duración:</strong> <span th:text="${evento.duracion}">180</span> min<br>
+                <strong>Categoría:</strong> <span th:text="${evento.tipoEvento.tipo}">Rock</span>
+              </p>
+            </div>
+            <div class="mt-3">
+              <a th:href="@{/cliente/eventos/{id}(id=${evento.idEvento})}" class="btn btn-primary mt-3">Comprar Boletos</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav th:if="${totalPages > 1}" class="mt-4">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+          <a class="page-link"
+             th:href="@{'/cliente/eventos'(page=${currentPage - 1}, categoria=${categoriaSeleccionada})}">Anterior</a>
+        </li>
+
+        <li class="page-item"
+            th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+            th:classappend="${i == currentPage} ? 'active'">
+          <a class="page-link"
+             th:href="@{'/cliente/eventos'(page=${i}, categoria=${categoriaSeleccionada})}"
+             th:text="${i + 1}">1</a>
+        </li>
+
+        <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+          <a class="page-link"
+             th:href="@{'/cliente/eventos'(page=${currentPage + 1}, categoria=${categoriaSeleccionada})}">Siguiente</a>
+        </li>
+      </ul>
+    </nav>
+
+  </div>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

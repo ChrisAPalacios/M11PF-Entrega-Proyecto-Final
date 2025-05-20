@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+
+<header th:replace="~{plantillas/header_admin :: header}"></header>
+
+<main class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header text-white bg-primary text-center">
+      <h4>Detalles del Usuario</h4>
+    </div>
+    <div class="card-body">
+      <p><strong>ID:</strong> <span th:text="${usuario.idUsuario}">1</span></p>
+      <p><strong>Nombre:</strong>
+        <span th:text="${usuario.nombre + ' ' + usuario.apellidoPaterno + ' ' + usuario.apellidoMaterno}">Nombre completo</span>
+      </p>
+      <p><strong>Correo:</strong> <span th:text="${usuario.correo}">correo@unam.mx</span></p>
+      <p><strong>Teléfono:</strong> <span th:text="${usuario.telefono}">5551234567</span></p>
+      <p><strong>Tipo de Usuario:</strong> <span th:text="${usuario.tipoUsuario}">CLIENTE</span></p>
+    </div>
+    <div class="card-footer text-center">
+      <a th:href="@{/admin/usuarios}" class="btn btn-secondary">Volver</a>
+    </div>
+  </div>
+
+  <!-- Historial de Boletos -->
+  <div class="card shadow mt-4">
+    <div class="card-header bg-info text-white">
+      <h5 class="mb-0">Historial de Boletos</h5>
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table table-bordered table-striped align-middle text-center">
+        <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Evento</th>
+          <th>Zona</th>
+          <th>Asiento</th>
+          <th>Precio</th>
+          <th>Estado</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="boleto : ${boletos}">
+          <td th:text="${boleto.idBoleto}">1</td>
+          <td th:text="${boleto.asientoEvento.evento.nombreEvento}">Evento</td>
+          <td th:text="${boleto.asientoEvento.asiento.zona.nombreZona}">Zona</td>
+          <td th:text="${boleto.asientoEvento.asiento.numeroAsiento}">A-001</td>
+          <td th:text="${boleto.asientoEvento.asiento.zona.precio}">100.00</td>
+          <td th:text="${boleto.estado}">Vendido</td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(boletos)}">
+          <td colspan="6">Este usuario no tiene boletos.</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

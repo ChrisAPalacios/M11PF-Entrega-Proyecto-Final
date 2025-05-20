@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Prueba de Datos Reales</title>
+</head>
+<body>
+
+<h2>Prueba de Datos Cargados</h2>
+
+<div th:if="${mensaje}" class="alert alert-success">
+    <p th:text="${mensaje}">¡Compra realizada con éxito!</p>
+</div>
+
+<div th:if="${compra != null}">
+    <p><strong>Compra ID:</strong> <span th:text="${compra.idCompra}">?</span></p>
+
+    <table border="1" cellpadding="8">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Evento</th>
+            <th>Zona</th>
+            <th>Asiento</th>
+            <th>Precio</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="boleto, iterStat : ${compra.boletos}"
+            th:if="${boleto.asientoEvento != null and boleto.asientoEvento.evento != null and boleto.asientoEvento.asiento != null and boleto.asientoEvento.asiento.zona != null}">
+            <td th:text="${iterStat.index + 1}">1</td>
+            <td th:text="${boleto.asientoEvento.evento.nombreEvento}">Evento</td>
+            <td th:text="${boleto.asientoEvento.asiento.zona.nombreZona}">Zona</td>
+            <td th:text="${boleto.asientoEvento.asiento.numeroAsiento}">A-001</td>
+            <td th:text="${boleto.asientoEvento.asiento.zona.precio}">100.00</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:if="${compra == null}" class="alert alert-warning">
+    <p>No se encontró la información de la compra.</p>
+</div>
+
+</body>
+</html>

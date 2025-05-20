@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+<header th:replace="~{plantillas/header :: header}"></header>
+
+<main class="container mt-4">
+  <h2 class="text-center mb-4">Bienvenido a Eventia</h2>
+  <div id="carouselEventos" class="carousel slide mb-5" data-bs-ride="carousel" th:if="${eventosDestacados}">
+    <div class="carousel-inner">
+      <div class="carousel-item" th:each="evento, stat : ${eventosDestacados}" th:classappend="${stat.index == 0} ? 'active'">
+        <img th:src="@{/images/{poster}(poster=${evento.poster})}" class="d-block mx-auto" style="max-height: 300px;" th:alt="${evento.nombreEvento}">
+        <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2">
+          <h5 th:text="${evento.nombreEvento}">Nombre</h5>
+          <p>
+            <strong>Fecha:</strong> <span th:text="${evento.fecha}"></span> |
+            <strong>Duración:</strong> <span th:text="${evento.duracion}"></span> min |
+            <strong>Categoría:</strong> <span th:text="${evento.tipoEvento.tipo}"></span>
+          </p>
+        </div>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselEventos" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselEventos" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+    </button>
+  </div>
+  <div class="mb-3">
+    <input id="busquedaEvento" type="text" class="form-control" placeholder="Buscar eventos por nombre..." list="sugerencias">
+    <datalist id="sugerencias"></datalist>
+  </div>
+
+  <div class="row justify-content-center" id="resultadoEvento"></div>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("busquedaEvento");
+    const sugerencias = document.getElementById("sugerencias");
+    const resultado = document.getElementById("resultadoEvento");
+
+    input.addEventListener("input", () => {
+      const query = input.value.trim();
+      if (query.length < 2) return;
+
+      fetch(`/buscar-eventos?nombre=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => {
+          sugerencias.innerHTML = "";
+          data.forEach(evento => {
+            const option = document.createElement("option");
+            option.value = evento.nombreEvento;
+            sugerencias.appendChild(option);
+          });
+        });
+    });
+
+    // Mostrar tarjeta al presionar Enter
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const nombre = input.value.trim();
+        if (!nombre) return;
+
+        fetch(`/buscar-eventos?nombre=${encodeURIComponent(nombre)}`)
+          .then(res => res.json())
+          .then(data => {
+            resultado.innerHTML = "";
+            if (data.length > 0) {
+              const evento = data[0];
+
+              // Verificación segura de propiedades anidadas
+              const categoria = evento.tipoEvento?.tipo || "Sin categoría";
+
+              resultado.innerHTML = `
+                <div class="col-md-6">
+                  <div class="card mt-3 shadow">
+                  <img src="/images/${evento.poster}" alt="${evento.nombreEvento}" class="card-img-top" style="height: 250px; object-fit: cover;">
+                    <div class="card-body text-center">
+                      <h5 class="card-title">${evento.nombreEvento}</h5>
+                      <p>
+                        <strong>Fecha:</strong> ${evento.fecha}<br>
+                        <strong>Duración:</strong> ${evento.duracion} min<br>
+                        <strong>Categoría:</strong> ${categoria}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              `;
+            } else {
+              resultado.innerHTML = `<p class="text-center text-danger">No se encontró el evento.</p>`;
+            }
+          });
+      }
+    });
+  });
+</script>
+</body>
+</html>

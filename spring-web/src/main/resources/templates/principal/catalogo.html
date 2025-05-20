@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+<header th:replace="~{plantillas/header :: header}"></header>
+
+<div th:replace="~{plantillas/layout :: contenido}">
+    <h1 class="text-center">Catálogo de Eventos</h1>
+
+    <div class="row mt-4">
+        <div class="col-md-4 mb-4" th:each="evento : ${eventos}">
+            <div class="card">
+                <img th:src="@{/image/evento.jpg}" class="card-img-top" alt="Imagen del evento">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${evento.nombre}">Nombre del Evento</h5>
+                    <p class="card-text"><strong>Fecha:</strong> <span th:text="${evento.fecha}">00/00/0000</span></p>
+                    <p class="card-text"><strong>Categoría:</strong> <span th:text="${evento.categoria.nombre}">Categoría</span></p>
+                    <p class="card-text"><strong>Precio:</strong> <span th:text="'$' + ${evento.precio}">0.00</span></p>
+                    <a th:href="@{/principal/detalle_evento/{id}(id=${evento.id})}" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

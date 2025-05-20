@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+
+<header th:replace="~{plantillas/header_admin :: header}"></header>
+
+<main class="container mt-5">
+    <h2 class="text-center text-primary">Gestión de Eventos</h2>
+    <div class="text-end mb-3">
+        <a th:href="@{/admin/eventos/nuevo}" class="btn btn-success">Nuevo Evento</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle text-center">
+            <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Evento</th>
+                <th>Fecha</th>
+                <th>Duración</th>
+                <th>Tipo</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="evento : ${eventos}">
+                <td th:text="${evento.idEvento}">1</td>
+
+                <!-- Póster + Nombre del evento -->
+                <td>
+                    <img th:if="${evento.poster != null}" th:src="@{/images/{img}(img=${evento.poster})}"
+                         alt="Póster" class="img-thumbnail mb-2" style="width: 100px; height: 140px; object-fit: cover;">
+                    <div th:text="${evento.nombreEvento}">Nombre</div>
+                </td>
+
+                <td th:text="${evento.fecha}">2025-06-01</td>
+                <td th:text="${evento.duracion}">120</td>
+                <td th:text="${evento.tipoEvento.tipo}">Tipo</td>
+                <td>
+                    <a th:href="@{/admin/eventos/editar/{id}(id=${evento.idEvento})}" class="btn btn-sm btn-warning">Editar</a>
+                    <a th:href="@{/admin/eventos/eliminar/{id}(id=${evento.idEvento})}" class="btn btn-sm btn-danger"
+                       onclick="return confirm('¿Estás seguro de eliminar este evento?')">Eliminar</a>
+
+                    <form th:action="@{/admin/eventos/poster}" method="post" enctype="multipart/form-data" class="mt-2">
+                        <input type="hidden" name="idEvento" th:value="${evento.idEvento}"/>
+                        <input type="file" name="posterFile" accept="image/png, image/jpeg" required class="form-control form-control-sm mb-1"/>
+                        <button type="submit" class="btn btn-sm btn-info">Añadir Póster</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

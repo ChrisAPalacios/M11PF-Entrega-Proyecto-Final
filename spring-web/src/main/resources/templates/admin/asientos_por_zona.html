@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+<header th:replace="~{plantillas/header_admin :: header}"></header>
+
+<main class="container mt-4">
+  <h2 class="text-center" th:text="${titulo}">Asientos</h2>
+
+  <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span th:text="${mensaje}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+  </div>
+
+  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <span th:text="${error}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+  </div>
+
+  <div class="text-end mb-3">
+    <a th:if="${asientosPage.content.empty}"
+       th:href="@{'/admin/asientos/generar/' + ${zona.idZona}}"
+       class="btn btn-success">
+      <i class="bi bi-gear-fill"></i> Generar Asientos
+    </a>
+
+    <button class="btn btn-secondary" disabled th:unless="${asientosPage.content.empty}">
+      <i class="bi bi-check-circle-fill"></i> Asientos Generados
+    </button>
+  </div>
+  <table class="table table-bordered text-center">
+    <thead class="table-info">
+    <tr>
+      <th>ID</th>
+      <th>Número</th>
+      <th>Zona</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="asiento : ${asientosPage.content}">
+      <td th:text="${asiento.idAsiento}"></td>
+      <td th:text="${asiento.numeroAsiento}"></td>
+      <td th:text="${asiento.zona.nombreZona}"></td>
+    </tr>
+    <tr th:if="${asientosPage.content.empty}">
+      <td colspan="3" class="text-center">No hay asientos registrados para esta zona.</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <nav th:if="${asientosPage.totalPages > 1}" class="mt-3">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" th:classappend="${asientosPage.first} ? 'disabled'">
+        <a class="page-link"
+           th:href="@{|/admin/asientos/${zona.idZona}/${evento.idEvento}?page=${asientosPage.number - 1}|}">
+          Anterior
+        </a>
+      </li>
+
+      <li class="page-item"
+          th:each="i : ${#numbers.sequence(0, asientosPage.totalPages - 1)}"
+          th:classappend="${i == asientosPage.number} ? 'active'">
+        <a class="page-link"
+           th:href="@{|/admin/asientos/${zona.idZona}/${evento.idEvento}?page=${i}|}"
+           th:text="${i + 1}">1</a>
+      </li>
+
+      <li class="page-item" th:classappend="${asientosPage.last} ? 'disabled'">
+        <a class="page-link"
+           th:href="@{|/admin/asientos/${zona.idZona}/${evento.idEvento}?page=${asientosPage.number + 1}|}">
+          Siguiente
+        </a>
+      </li>
+    </ul>
+  </nav>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

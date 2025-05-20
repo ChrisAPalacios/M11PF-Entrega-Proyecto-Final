@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+
+<header th:replace="~{plantillas/header_admin :: header}"></header>
+
+<main class="container mt-4">
+  <h2 class="text-center">Gestión de Zonas</h2>
+  <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+    <span th:text="${mensaje}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+  </div>
+
+  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+    <span th:text="${error}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+  </div>
+
+  <div class="text-end mb-3">
+    <a class="btn btn-success" th:href="@{/admin/zonas/nueva}">
+      <i class="bi bi-plus-circle"></i> Nueva Zona
+    </a>
+  </div>
+
+  <table class="table table-bordered table-striped text-center">
+    <thead class="table-primary">
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Precio</th>
+      <th>Capacidad</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="zona : ${zonas}">
+      <td th:text="${zona.idZona}"></td>
+      <td th:text="${zona.nombreZona}"></td>
+      <td th:text="${zona.precio}"></td>
+      <td th:text="${zona.capacidad}"></td>
+      <td>
+        <a th:href="@{'/admin/zonas/editar/' + ${zona.idZona}}" class="btn btn-warning btn-sm">Editar Zona</a>
+        <a th:href="@{/admin/asientos/{idZona}/1(idZona=${zona.idZona})}" class="btn btn-sm btn-info">Ver Asientos</a>
+        <a th:if="${!asientosGenerados[zona.idZona]}"
+           th:href="@{/admin/asientos/generar-todos-eventos/{idZona}(idZona=${zona.idZona})}"
+           class="btn btn-secondary btn-sm">Generar Asientos en Eventos</a>
+
+        <button th:if="${asientosGenerados[zona.idZona]}"
+                class="btn btn-secondary btn-sm" disabled>
+          <i class="bi bi-check-circle-fill"></i> Asientos Generados
+        </button>
+
+        <a th:href="@{/admin/zonas/eliminar/{id}(id=${zona.idZona})}"
+           class="btn btn-sm btn-danger"
+           onclick="return confirm('¿Seguro que deseas eliminar esta zona?')">Eliminar</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

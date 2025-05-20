@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{plantillas/head :: head}"></head>
+<body>
+<header th:replace="~{plantillas/header :: header}"></header>
+
+<main th:replace="~{plantillas/layout :: contenido(~{::detalleEvento})}">
+  <section th:fragment="detalleEvento">
+    <h1 class="text-center" th:text="${evento.nombreEvento}">Nombre del Evento</h1>
+
+    <div class="row mt-4">
+      <div class="col-md-6 text-center">
+        <img th:src="@{/image/{poster}(poster=${evento.poster})}" class="img-fluid rounded" alt="Poster del evento" style="max-height: 400px; object-fit: contain;">
+      </div>
+      <div class="col-md-6">
+        <p><strong>Fecha:</strong> <span th:text="${evento.fecha}">00/00/0000</span></p>
+        <p><strong>Duración:</strong> <span th:text="${evento.duracion}">120</span> min</p>
+        <p><strong>Categoría:</strong> <span th:text="${evento.tipoEvento.tipo}">Tipo</span></p>
+
+        <a th:href="@{/eventos}" class="btn btn-secondary">Volver a eventos</a>
+        <a th:href="@{/evento/{id}/comprar(id=${evento.idEvento})}" class="btn btn-primary">Comprar boletos</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer th:replace="~{plantillas/footer :: footer}"></footer>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
